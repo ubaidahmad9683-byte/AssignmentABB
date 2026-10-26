@@ -1,0 +1,58 @@
+@baseUrl = http://localhost:5089
+@gameId = 00000000-0000-0000-0000-000000000000
+@token = paste-access-token-here
+
+### Request a JWT (replace bootstrap credentials)
+POST {{baseUrl}}/api/auth/token
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "replace-me"
+}
+
+### Create a two-player game
+POST {{baseUrl}}/api/games
+Content-Type: application/json
+
+{
+  "mode": "TwoPlayer"
+}
+
+### Paginated games
+GET {{baseUrl}}/api/games?page=1&pageSize=20
+Accept: application/json
+
+### Get game by ID
+GET {{baseUrl}}/api/games/{{gameId}}
+Accept: application/json
+
+### Submit a move
+POST {{baseUrl}}/api/games/{{gameId}}/moves
+Content-Type: application/json
+
+{
+  "player": "X",
+  "row": 0,
+  "column": 0
+}
+
+### Undo
+POST {{baseUrl}}/api/games/{{gameId}}/undo
+
+### Reset game
+POST {{baseUrl}}/api/games/{{gameId}}/reset
+
+### Get scoreboard
+GET {{baseUrl}}/api/scoreboard
+Accept: application/json
+
+### Reset scoreboard (Admin JWT required)
+POST {{baseUrl}}/api/scoreboard/reset
+Authorization: Bearer {{token}}
+
+### Liveness
+GET {{baseUrl}}/health/live
+
+### Readiness (checks SQL Server and optional Redis)
+GET {{baseUrl}}/health/ready

@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/backend/">
+    <Project Path="backend/TicTacToe.Api/TicTacToe.Api.csproj" />
+    <Project Path="backend/TicTacToe.Application/TicTacToe.Application.csproj" />
+    <Project Path="backend/TicTacToe.Domain/TicTacToe.Domain.csproj" />
+    <Project Path="backend/TicTacToe.Infrastructure/TicTacToe.Infrastructure.csproj" />
+    <Project Path="backend/TicTacToe.Tests/TicTacToe.Tests.csproj" />
+  </Folder>
+</Solution>

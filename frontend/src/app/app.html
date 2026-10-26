@@ -1,0 +1,129 @@
+<main class="page-shell">
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Tic Tac Toe home">
+      <span class="brand-mark" aria-hidden="true"><span>X</span><span>O</span></span>
+      <span>Three in a row</span>
+    </a>
+    <span class="session-label"><span class="live-dot"></span> Local game session</span>
+  </header>
+
+  <section class="intro">
+    <p class="eyebrow">A little friendly competition</p>
+    <h1>Make your move.</h1>
+    <p class="subtitle">A classic game, with a clever little opponent.</p>
+  </section>
+
+  <section class="game-layout" aria-label="Tic Tac Toe game">
+    <section class="game-card">
+      <div class="game-toolbar">
+        <div class="mode-picker" role="group" aria-label="Game mode">
+          <button type="button" [class.active]="mode === 'TwoPlayer'" [disabled]="busy" (click)="selectMode('TwoPlayer')">
+            Two players
+          </button>
+          <button type="button" [class.active]="mode === 'Computer'" [disabled]="busy" (click)="selectMode('Computer')">
+            Play computer
+          </button>
+        </div>
+        <span class="turn-badge" [class.player-o]="game?.currentPlayer === 'O'">
+          <span class="turn-symbol">{{ game?.status === 'Won' ? game?.winner : game?.status === 'Draw' ? '—' : game?.currentPlayer }}</span>
+          {{ statusMessage }}
+        </span>
+      </div>
+
+      <div class="board" role="grid" aria-label="Tic Tac Toe board">
+        @for (cell of cells; track cell) {
+          <button
+            type="button"
+            class="cell"
+            role="gridcell"
+            [class.cell-x]="game?.board?.[cell] === 'X'"
+            [class.cell-o]="game?.board?.[cell] === 'O'"
+            [class.winning-cell]="game?.winningCells?.includes(cell)"
+            [disabled]="busy || !isPlayable(cell)"
+            [attr.aria-label]="'Row ' + rowNumber(cell) + ', column ' + columnNumber(cell) + (game?.board?.[cell] ? ', ' + game?.board?.[cell] : ', empty')"
+            (click)="play(cell)">
+            {{ game?.board?.[cell] }}
+          </button>
+        }
+      </div>
+
+      @if (error) {
+        <p class="error-message" role="alert">{{ error }}</p>
+      }
+
+      <div class="game-actions">
+        <button class="button button-primary" type="button" [disabled]="busy || !game" (click)="resetGame()">
+          <span aria-hidden="true">↻</span> New game
+        </button>
+        <button class="button button-secondary" type="button" [disabled]="busy || !canUndo" (click)="undo()">
+          <span aria-hidden="true">↶</span> Undo last move
+        </button>
+      </div>
+      <p class="undo-note">
+        @if (game?.mode === 'Computer') {
+          Undo takes back your move and the computer's reply.
+        } @else {
+          Undo takes back the most recent move.
+        }
+      </p>
+    </section>
+
+    <aside class="sidebar">
+      <section class="panel scoreboard-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">The running total</p><h2>Scoreboard</h2></div>
+          <span class="trophy" aria-hidden="true">✳</span>
+        </div>
+        <div class="score-grid">
+          <div class="score-item score-x"><span class="score-symbol">X</span><strong>{{ scoreboard.xWins }}</strong><span>Wins</span></div>
+          <div class="score-item score-o"><span class="score-symbol">O</span><strong>{{ scoreboard.oWins }}</strong><span>Wins</span></div>
+          <div class="score-item score-draw"><span class="score-symbol">=</span><strong>{{ scoreboard.draws }}</strong><span>Draws</span></div>
+        </div>
+        <div class="scoreboard-actions">
+          @if (authenticated) {
+            <button class="text-button" type="button" [disabled]="busy" (click)="logout()">Sign out</button>
+          }
+          <button class="text-button" type="button" [disabled]="busy" (click)="resetScoreboard()">Reset scoreboard</button>
+        </div>
+        @if (loginVisible) {
+          <form class="admin-login" (submit)="$event.preventDefault(); login()">
+            <label>Admin username<input name="username" autocomplete="username" [(ngModel)]="username" /></label>
+            <label>Password<input name="password" type="password" autocomplete="current-password" [(ngModel)]="password" /></label>
+            <button class="button button-primary" type="submit" [disabled]="busy || !username || !password">Sign in to reset</button>
+          </form>
+        }
+      </section>
+
+      <section class="panel history-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">This round</p><h2>Move history</h2></div>
+          <span class="move-count">{{ game?.moveHistory?.length ?? 0 }} moves</span>
+        </div>
+        <div class="history-table-wrap">
+          <table>
+            <thead><tr><th>Move</th><th>Player</th><th>Position</th></tr></thead>
+            <tbody>
+              @for (move of game?.moveHistory ?? []; track move.moveNumber) {
+                <tr>
+                  <td class="move-number">{{ move.moveNumber.toString().padStart(2, '0') }}</td>
+                  <td><span class="history-player" [class.history-o]="move.player === 'O'">{{ move.player }}</span></td>
+                  <td>Row {{ move.row + 1 }}, Column {{ move.column + 1 }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="3" class="empty-history">Your moves will appear here.</td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        @if (game?.mode === 'Computer') {
+          <p class="history-footnote">Computer moves are included in the history.</p>
+        }
+      </section>
+    </aside>
+  </section>
+
+  <footer class="page-footer">
+    <span>Think ahead. Have fun.</span>
+    <span>Built for the love of the game</span>
+  </footer>
+</main>

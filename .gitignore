@@ -1,0 +1,15 @@
+**/bin/
+**/obj/
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+.angular/
+.vs/
+.idea/
+*.user
+*.suo
+.env
+.env.*
+!.env.example
+**/appsettings.*.local.json
+**/secrets.json
